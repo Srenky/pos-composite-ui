@@ -16,7 +16,7 @@ interface OrderItem {
 }
 
 interface CreatedOrderCardProps {
-  tableNumber: number; // Example to group orders by table
+  tableNumber: number;
   orderItems: OrderItem[];
   totalPrice: number;
 }
@@ -25,7 +25,7 @@ const CreatedOrderCard: React.FC<CreatedOrderCardProps> = ({
   tableNumber,
   orderItems,
   totalPrice,
-}) => {
+}: CreatedOrderCardProps) => {
   const sendMessageToMAUI = (amountToPay: number) => {
     window.location.href = `http://csharp.pay?amount=${amountToPay}`;
   };
@@ -33,12 +33,10 @@ const CreatedOrderCard: React.FC<CreatedOrderCardProps> = ({
   return (
     <Card sx={{ marginBottom: 2, padding: 2 }}>
       <CardContent>
-        {/* Table Header */}
         <Typography variant="h6" gutterBottom>
           Table {tableNumber}
         </Typography>
 
-        {/* Order Items */}
         {orderItems.map((item) => (
           <Box
             key={item.id}
@@ -64,16 +62,14 @@ const CreatedOrderCard: React.FC<CreatedOrderCardProps> = ({
           </Box>
         ))}
 
-        {/* Divider */}
         <Divider sx={{ marginY: 2 }} />
 
-        {/* Total Cost */}
         <Typography
           variant="h6"
           align="right"
           sx={{
             fontSize: {
-              xs: '1.1rem', // Adjust font size for small screens
+              xs: '1.1rem',
               sm: '1.25rem',
             },
           }}
@@ -81,7 +77,6 @@ const CreatedOrderCard: React.FC<CreatedOrderCardProps> = ({
           Total: ${totalPrice}
         </Typography>
 
-        {/* Button to pay for the order */}
         <Box display="flex" justifyContent="flex-end" mt={2}>
           <Button
             variant="contained"

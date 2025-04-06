@@ -21,7 +21,7 @@ interface CreatedOrderCardProps {
   totalPrice: number;
   createdAt: string;
   done: boolean;
-  onMarkAsReady: () => void; // New prop to handle the "Mark as Ready" action
+  onMarkAsReady: () => void;
 }
 
 const CreatedOrderCard: React.FC<CreatedOrderCardProps> = ({
@@ -31,7 +31,7 @@ const CreatedOrderCard: React.FC<CreatedOrderCardProps> = ({
   createdAt,
   done,
   onMarkAsReady,
-}) => {
+}: CreatedOrderCardProps) => {
   if (done) {
     return null;
   }
@@ -39,7 +39,6 @@ const CreatedOrderCard: React.FC<CreatedOrderCardProps> = ({
   return (
     <Card sx={{ marginBottom: 2, padding: 2 }}>
       <CardContent>
-        {/* Order Header */}
         <Box
           display="flex"
           justifyContent="space-between"
@@ -49,12 +48,10 @@ const CreatedOrderCard: React.FC<CreatedOrderCardProps> = ({
           <Typography variant="h6">Table {tableNumber}</Typography>
         </Box>
 
-        {/* Time Created */}
         <Typography variant="body2" color="text.secondary" gutterBottom>
           Created at: {new Date(createdAt).toLocaleString()}
         </Typography>
 
-        {/* Order Items */}
         {orderItems.map((item) => (
           <Box
             key={item.id}
@@ -80,16 +77,14 @@ const CreatedOrderCard: React.FC<CreatedOrderCardProps> = ({
           </Box>
         ))}
 
-        {/* Divider */}
         <Divider sx={{ marginY: 2 }} />
 
-        {/* Total Cost */}
         <Typography
           variant="h6"
           align="right"
           sx={{
             fontSize: {
-              xs: "1.1rem", // Adjust font size for small screens
+              xs: "1.1rem",
               sm: "1.25rem",
             },
           }}
@@ -97,7 +92,6 @@ const CreatedOrderCard: React.FC<CreatedOrderCardProps> = ({
           Total: ${totalPrice}
         </Typography>
 
-        {/* Button to Mark as Ready */}
         <Box mt={2} textAlign="center">
           <Button
             variant="contained"

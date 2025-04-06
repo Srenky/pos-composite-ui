@@ -57,7 +57,7 @@ public partial class MainPage
         // prevent the navigation to complete
         e.Cancel = true;
 
-        // Go to the 
+        // Go to the payment page with the specified amount
         if (amount != null) NavigateToPaymentPage(int.Parse(amount));
     }
 }

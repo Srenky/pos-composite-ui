@@ -49,7 +49,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const fetchMenuItems = async () => {
-      const response = await fetch("http://localhost:8080/menu");
+      const response = await fetch("https://dpne9iqs25.execute-api.eu-north-1.amazonaws.com/menu");
       const data = await response.json();
       setMenuItems(data);
     };
@@ -69,9 +69,9 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (client) {
-      client.on("connect", () => {});
+      client.on("connect", () => { });
 
-      client.on("message", (topic, message) => {});
+      client.on("message", (topic, message) => { });
     }
   }, [client]);
 
@@ -122,7 +122,6 @@ const App: React.FC = () => {
 
   return (
     <Container maxWidth="lg" sx={{ padding: 2 }}>
-      {/* Analytics Section */}
       <Paper sx={{ padding: 3, marginBottom: 3 }}>
         <Typography variant="h5" sx={{ marginBottom: 2 }}>
           Analytics
@@ -135,7 +134,6 @@ const App: React.FC = () => {
         </Typography>
       </Paper>
 
-      {/* Menu Items Section */}
       <Typography variant="h5" sx={{ marginBottom: 2 }}>
         Menu Items
       </Typography>
@@ -183,7 +181,6 @@ const App: React.FC = () => {
         </Button>
       </Box>
 
-      {/* Dialog for Add/Edit Menu Item */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>
           {selectedItem ? "Edit Menu Item" : "Add New Menu Item"}
@@ -232,7 +229,6 @@ const App: React.FC = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Snackbar for notifications */}
       <Snackbar
         open={openSnackbar}
         autoHideDuration={3000}

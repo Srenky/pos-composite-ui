@@ -37,7 +37,6 @@ const App: React.FC = () => {
   useEffect(() => {
     const client = mqtt.connect(
       "wss://ee3fe3db.ala.eu-central-1.emqxsl.com:8084/mqtt",
-      // "ws://localhost:8083/mqtt",
       options,
     );
     setClient(client);
@@ -53,10 +52,10 @@ const App: React.FC = () => {
         client.subscribe("order/new");
       });
 
-      client.on("message", (topic, message) => {
+      client.on("message", (topic: string, message: any) => {
         if (topic === "order/new") {
-          // const newOrder = JSON.parse(message.toString());
-          // setOrders((prevOrders) => [...prevOrders, newOrder]);
+          const newOrder = JSON.parse(message.toString());
+          setOrders((prevOrders: KitchenOrder[]) => [...prevOrders, newOrder]);
         }
       });
     }
@@ -86,20 +85,20 @@ const App: React.FC = () => {
       </Typography>
 
       {/* Display a message if there are no orders */}
-      {orders.filter((order) => !order.done).length === 0 && (
+      {orders.filter((order: KitchenOrder) => !order.done).length === 0 && (
         <Typography variant="body1">No orders right now</Typography>
       )}
 
       <Grid container spacing={2}>
         {orders.map(
-          (order, index) =>
+          (order: KitchenOrder, index: number) =>
             !order.done && (
               <Grid
                 item
-                xs={12} // Full-width on extra-small screens
-                sm={6} // Two columns on small screens
-                md={4} // Three columns on medium screens
-                lg={3} // Four columns on large screens
+                xs={12}
+                sm={6}
+                md={4}
+                lg={3}
                 key={index}
               >
                 <CreatedOrderCard

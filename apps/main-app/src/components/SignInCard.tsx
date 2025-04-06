@@ -47,7 +47,6 @@ export default function SignInCard() {
           navigate('/checkout', { replace: true });
           break;
         default:
-          // alert('The username or password you entered is incorrect');
           break;
       }
     });
