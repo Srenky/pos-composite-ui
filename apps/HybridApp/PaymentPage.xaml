@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HybridApp.PaymentPage">
+    <ContentPage.Content>
+        
+        <StackLayout>
+            <Image Source="credit_card.png"
+                   Aspect="AspectFit"
+                   HeightRequest="200"
+                   HorizontalOptions="Center"
+                   Margin="0,40,0,0" />
+            
+            <Label x:Name="AmountLabel"
+                   FontSize="24"
+                   Text="" 
+                   HorizontalOptions="Center" 
+                   VerticalOptions="CenterAndExpand" />
+            
+            <Label x:Name="Status"
+                   FontSize="24"
+                   Text="" 
+                   HorizontalOptions="Center" 
+                   VerticalOptions="CenterAndExpand" />
+        </StackLayout>
+        
+    </ContentPage.Content>
+</ContentPage>
