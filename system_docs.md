@@ -2,16 +2,17 @@
 
 ## Architektúra experimentálneho POS systému
 
-Experimentálny POS systém je založený na mikrofrontendovej architektúre s využitím hybridnej aplikácii, ktorá systému sprístupňuje natívne platformové funkcie. Na obrázku nižšie možno vidieť prehľad tejto architektúry.
+Experimentálny POS systém je založený na mikrofrontendovej architektúre s využitím hybridnej aplikácie, ktorá systému sprístupňuje natívne platformové funkcie. Na obrázku nižšie možno vidieť prehľad tejto architektúry.
 
 ![Architektúra POS systému](images/pos_architecture.png)
 
-## Aplikácie tvoriace systém
+## Celkovo POS systém tvorí:
 
 - **Checkout app** - aplikácia pre obsluhujúci personál na správu objednávok a platieb
 - **Kitchen display app** - aplikácia pre kuchynský personál na prehľad aktuálnych objednávok
 - **Backoffice app** - aplikácia pre manažéra poskytujúca prehľad tržieb a aktuálneho menu
 - **POS Portal app** - aplikácia, ktorá integruje všetky mikrofrontendy do jedného celku
+- **Hybrid app** - hybridná aplikácia pre Android, ktorá pomocou WebView zobrazuje POS Portal
 - **MQTT broker** - slúži na okamžitú komunikáciu medzi webovými aplikáciami
 - **REST backend** - kombinácia AWS Lambda a AWS API Gateway služieb na vytvorenie jednoduchého RESTful API
 - **mongoDB databáza** - databáza obsahujúca kolekcie používateľov a objednávok
@@ -196,3 +197,15 @@ V novovytvorenom API pridajte novú `Route` kliknutím na tlačidlo `Create` v s
 Potom v sekcii `Integrations` pre túto `Route` viete pridať integráciu s Lambda funkciou pomocou dropdownu, kde budú zobrazené dostupné Lambda funkcie.
 
 ![AWS API Gateway](images/aws-api-routes-integration.png)
+
+### MQTT broker
+
+Na nasadenie MQTT brokera je možné využiť hocijakú platformu. Keďže sme využili platformu EMQX, priblížime si tento postup.
+
+V prvom rade treba mať vytvorený účet. Potom v sekcii `Deployments` kliknite na tlačidlo `New Deployment`.
+
+![MQTT](images/mqtt_deploy.png)
+
+Potom treba zvoliť `Serverless` plán, nakoľko tento plán funguje na princípe Pay as you go, takže je ideálny napr. pre testovanie. Ako región vyberte `Europe` a nakoniec meno pre brokera. Broker sa vytvorí kliknutím na tlačidlo `Deploy`.
+
+![MQTT](images/mqtt_deploy_2.png)
