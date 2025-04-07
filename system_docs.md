@@ -213,9 +213,14 @@ V novovytvorenom API pridajte novú `Route` kliknutím na tlačidlo `Create` v s
 
 ![AWS API Gateway](images/aws-api-routes.png)
 
-Potom v sekcii `Integrations` pre túto `Route` viete pridať integráciu s Lambda funkciou pomocou dropdownu, kde budú zobrazené dostupné Lambda funkcie.
+Potom v sekcii `Integrations` pre túto `Route` viete pridať integráciu s Lambda funkciou pomocou tlačidla `Create and attach an integration`.
 
-![AWS API Gateway](images/aws-api-routes-integration.png)
+![AWS API Gateway](images/aws-api-integration.png)
+
+Ďalej treba vybrať `Lambda` ako typ integrácie a potom vybrať Lambda funkciu, ktorú chcete integrovať.
+
+![AWS API Gateway](images/aws-api-integration2.png)
+
 
 ### MQTT broker
 

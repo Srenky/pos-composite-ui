@@ -29,35 +29,48 @@ const Card = styled(MuiCard)(({ theme }) => ({
   }),
 }));
 
+async function isValidUser(user: string, password: string): Promise<boolean> {
+  const response = await fetch(
+    `https://dpne9iqs25.execute-api.eu-north-1.amazonaws.com/login?username=${user}&password=${password}`,
+  );
+  return response.status === 200;
+}
+
 export default function SignInCard() {
   const navigate = useNavigate();
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    const data = new FormData(event.currentTarget);
+  const [username, setUsername] = React.useState('');
+  const [password, setPassword] = React.useState('');
 
-    const response = await fetch(
-      `https://dpne9iqs25.execute-api.eu-north-1.amazonaws.com/login/${data.get('username')}/${data.get('password')}`,
-    );
+  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUsername(event.target.value);
+  };
 
-    const res = await response.json();
+  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(event.target.value);
+  };
 
-    if (!res.ok) {
+  const handleLoginClick = async () => {
+    const isValid = await isValidUser(username, password);
+
+    if (!isValid) {
       alert('The username or password you entered is incorrect');
       return;
     }
 
     startTransition(() => {
-      switch (data.get('username')) {
-        case 'admin':
+      switch (username) {
+        case 'backoffice':
           navigate('/backoffice', { replace: true });
           break;
         case 'kitchen':
           navigate('/kitchen', { replace: true });
           break;
-        case 'waiter':
+        case 'checkout':
           navigate('/checkout', { replace: true });
           break;
         default:
+          // alert('The username or password you entered is incorrect');
           break;
       }
     });
@@ -74,7 +87,6 @@ export default function SignInCard() {
       </Typography>
       <Box
         component="form"
-        onSubmit={handleSubmit}
         noValidate
         sx={{ display: 'flex', flexDirection: 'column', width: '100%', gap: 2 }}
       >
@@ -89,6 +101,7 @@ export default function SignInCard() {
             required
             fullWidth
             variant="outlined"
+            onChange={handleUsernameChange}
           />
         </FormControl>
         <FormControl>
@@ -103,9 +116,10 @@ export default function SignInCard() {
             required
             fullWidth
             variant="outlined"
+            onChange={handlePasswordChange}
           />
         </FormControl>
-        <Button type="submit" fullWidth variant="contained">
+        <Button fullWidth variant="contained" onClick={handleLoginClick}>
           Sign in
         </Button>
       </Box>
