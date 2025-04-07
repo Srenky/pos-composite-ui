@@ -14,6 +14,7 @@ import {
   MenuItem,
   Snackbar,
 } from "@mui/material";
+import mqtt, { MqttClient } from "mqtt";
 
 interface MenuItem {
   id: number;
@@ -34,7 +35,7 @@ const options = {
 };
 
 const BackofficePage: React.FC = () => {
-  // const [client, setClient] = useState<MqttClient | null>(null);
+  const [client, setClient] = useState<MqttClient | null>(null);
 
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
@@ -48,31 +49,33 @@ const BackofficePage: React.FC = () => {
 
   useEffect(() => {
     const fetchMenuItems = async () => {
-      const response = await fetch("http://localhost:8080/menu");
+      const response = await fetch(
+        "https://dpne9iqs25.execute-api.eu-north-1.amazonaws.com/menu",
+      );
       const data = await response.json();
       setMenuItems(data);
     };
 
     fetchMenuItems();
 
-    // const client = mqtt.connect(
-    //   "wss://ee3fe3db.ala.eu-central-1.emqxsl.com:8084/mqtt",
-    //   options,
-    // );
-    // setClient(client);
+    const client = mqtt.connect(
+      "wss://ee3fe3db.ala.eu-central-1.emqxsl.com:8084/mqtt",
+      options,
+    );
+    setClient(client);
 
-    // return () => {
-    //   client.end();
-    // };
+    return () => {
+      client.end();
+    };
   }, []);
 
-  // useEffect(() => {
-  //   if (client) {
-  //     client.on("connect", () => {});
+  useEffect(() => {
+    if (client) {
+      client.on("connect", () => {});
 
-  //     client.on("message", (topic, message) => {});
-  //   }
-  // }, [client]);
+      client.on("message", (topic, message) => {});
+    }
+  }, [client]);
 
   const handleAddMenuItem = () => {
     setSelectedItem(null);
@@ -88,24 +91,22 @@ const BackofficePage: React.FC = () => {
     setMenuItems(menuItems.filter((item) => item.id !== itemId));
     setSnackbarMessage("Item removed successfully");
     setOpenSnackbar(true);
-    // client?.publish("menu/remove", itemId.toString());
+    client?.publish("menu/remove", itemId.toString());
   };
 
   const handleSaveMenuItem = (name: string, price: number) => {
     if (selectedItem) {
-      // Edit existing item
       setMenuItems(
         menuItems.map((item) =>
           item.id === selectedItem.id ? { ...item, name, price } : item,
         ),
       );
       setSnackbarMessage("Item updated successfully");
-      // client?.publish(
-      //   "menu/updated",
-      //   JSON.stringify({ id: selectedItem.id, name, price }),
-      // );
+      client?.publish(
+        "menu/updated",
+        JSON.stringify({ id: selectedItem.id, name, price }),
+      );
     } else {
-      // Add new item
       const newItem = { id: menuItems.length + 1, name, price };
       setMenuItems([...menuItems, newItem]);
       setSnackbarMessage("New item added");
@@ -121,7 +122,6 @@ const BackofficePage: React.FC = () => {
 
   return (
     <Container maxWidth="lg" sx={{ padding: 2 }}>
-      {/* Analytics Section */}
       <Paper sx={{ padding: 3, marginBottom: 3 }}>
         <Typography variant="h5" sx={{ marginBottom: 2 }}>
           Analytics
@@ -134,7 +134,6 @@ const BackofficePage: React.FC = () => {
         </Typography>
       </Paper>
 
-      {/* Menu Items Section */}
       <Typography variant="h5" sx={{ marginBottom: 2 }}>
         Menu Items
       </Typography>
@@ -182,7 +181,6 @@ const BackofficePage: React.FC = () => {
         </Button>
       </Box>
 
-      {/* Dialog for Add/Edit Menu Item */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>
           {selectedItem ? "Edit Menu Item" : "Add New Menu Item"}
@@ -231,7 +229,6 @@ const BackofficePage: React.FC = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Snackbar for notifications */}
       <Snackbar
         open={openSnackbar}
         autoHideDuration={3000}

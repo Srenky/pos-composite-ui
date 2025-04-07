@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -14,7 +14,6 @@ import {
 } from '@mui/material';
 import { Add, Remove } from '@mui/icons-material';
 
-// Define types for menu items and orders
 interface MenuItem {
   id: number;
   name: string;
@@ -28,7 +27,6 @@ export interface OrderItem {
   price: number;
 }
 
-// Props for OrderDialog component
 interface OrderDialogProps {
   menuItems: MenuItem[];
   open: boolean;
@@ -36,17 +34,21 @@ interface OrderDialogProps {
   onOrder: (order: OrderItem[]) => void;
 }
 
-// Menu items array
-
 const OrderDialog: React.FC<OrderDialogProps> = ({
   menuItems,
   open,
   onClose,
   onOrder,
 }) => {
-  const [quantities, setQuantities] = useState<Record<number, number>>(
-    menuItems.reduce((acc, item) => ({ ...acc, [item.id]: 0 }), {}),
-  );
+  const [quantities, setQuantities] = useState<Record<number, number>>({});
+
+  useEffect(() => {
+    const initialQuantities = menuItems.reduce(
+      (acc, item) => ({ ...acc, [item.id]: 0 }),
+      {},
+    );
+    setQuantities(initialQuantities);
+  }, [menuItems]);
 
   const handleIncrement = (id: number) => {
     setQuantities((prev) => ({ ...prev, [id]: prev[id] + 1 }));

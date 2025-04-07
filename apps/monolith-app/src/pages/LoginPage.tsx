@@ -8,19 +8,24 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(function fetchEverything() {
-    // function should fetch menu items, current orders and analytics data
     const fetchMenuItems = async () => {
-      const response = await fetch("http://localhost:8080/menu");
+      const response = await fetch(
+        "https://dpne9iqs25.execute-api.eu-north-1.amazonaws.com/menu",
+      );
       const data = await response.json();
       console.log(data);
     };
     const fetchCurrentOrders = async () => {
-      const response = await fetch("http://localhost:8080/orders");
+      const response = await fetch(
+        "https://dpne9iqs25.execute-api.eu-north-1.amazonaws.com/orders",
+      );
       const data = await response.json();
       console.log(data);
     };
     const fetchAnalyticsData = async () => {
-      const response = await fetch("http://localhost:8080/analytics");
+      const response = await fetch(
+        "https://dpne9iqs25.execute-api.eu-north-1.amazonaws.com/analytics",
+      );
       const data = await response.json();
       console.log(data);
     };

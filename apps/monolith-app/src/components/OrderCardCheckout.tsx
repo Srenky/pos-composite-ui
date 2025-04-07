@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Card,
   CardContent,
@@ -6,7 +6,7 @@ import {
   Box,
   Divider,
   Button,
-} from '@mui/material';
+} from "@mui/material";
 
 interface OrderItem {
   id: number;
@@ -16,7 +16,7 @@ interface OrderItem {
 }
 
 interface CreatedOrderCardProps {
-  tableNumber: number; // Example to group orders by table
+  tableNumber: number;
   orderItems: OrderItem[];
   totalPrice: number;
 }
@@ -33,12 +33,10 @@ const CreatedOrderCard: React.FC<CreatedOrderCardProps> = ({
   return (
     <Card sx={{ marginBottom: 2, padding: 2 }}>
       <CardContent>
-        {/* Table Header */}
         <Typography variant="h6" gutterBottom>
           Table {tableNumber}
         </Typography>
 
-        {/* Order Items */}
         {orderItems.map((item) => (
           <Box
             key={item.id}
@@ -48,15 +46,15 @@ const CreatedOrderCard: React.FC<CreatedOrderCardProps> = ({
             flexWrap="wrap"
             my={1}
           >
-            <Typography variant="body2" sx={{ flex: '1 1 auto' }}>
+            <Typography variant="body2" sx={{ flex: "1 1 auto" }}>
               {item.quantity}x {item.name}
             </Typography>
             <Typography
               variant="body2"
               sx={{
-                flex: '0 0 auto',
-                minWidth: '80px',
-                textAlign: 'right',
+                flex: "0 0 auto",
+                minWidth: "80px",
+                textAlign: "right",
               }}
             >
               ${item.price * item.quantity}
@@ -64,24 +62,21 @@ const CreatedOrderCard: React.FC<CreatedOrderCardProps> = ({
           </Box>
         ))}
 
-        {/* Divider */}
         <Divider sx={{ marginY: 2 }} />
 
-        {/* Total Cost */}
         <Typography
           variant="h6"
           align="right"
           sx={{
             fontSize: {
-              xs: '1.1rem', // Adjust font size for small screens
-              sm: '1.25rem',
+              xs: "1.1rem",
+              sm: "1.25rem",
             },
           }}
         >
           Total: ${totalPrice}
         </Typography>
 
-        {/* Button to pay for the order */}
         <Box display="flex" justifyContent="flex-end" mt={2}>
           <Button
             variant="contained"

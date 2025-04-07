@@ -32,8 +32,19 @@ const Card = styled(MuiCard)(({ theme }) => ({
 export default function SignInCard() {
   const navigate = useNavigate();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     const data = new FormData(event.currentTarget);
+
+    const response = await fetch(
+      `https://dpne9iqs25.execute-api.eu-north-1.amazonaws.com/login/${data.get("username")}/${data.get("password")}`,
+    );
+
+    const res = await response.json();
+
+    if (!res.ok) {
+      alert("The username or password you entered is incorrect");
+      return;
+    }
 
     startTransition(() => {
       switch (data.get("username")) {
@@ -47,7 +58,7 @@ export default function SignInCard() {
           navigate("/checkout");
           break;
         default:
-          // alert('The username or password you entered is incorrect');
+          alert("The username or password you entered is incorrect");
           break;
       }
     });

@@ -33,17 +33,36 @@ REST API sa má značne jednoduchšiu štruktúru, nakoľko každý endpoint pre
 
 Naše API tvoria tieto endpointy:
 
+- **POST** `/login` - prihlásenie používateľa do aplikácie
 - **GET** `/menu` - vráti aktuálne menu
 - **GET** `/orders` - vráti aktuálne objednáky, ktoré ešte nie sú hotové
 - **POST** `/orders` - pridá novú objednávku
 - **PUT** `/orders/{id}` - zmení stav objednávky s daným id na 'done'
 - **GET** `/analytics` - vráti analytické dáta, ako počet hovotých objednávok a tržby z nich
 
-Dátový model pre objednávku (príklad)
+### MongoDB databáza
+
+MongoDB databáza obsahuje 2 kolekcie - `users` a `orders`.
+
+Dokumenty v kolekcii `users` majú nasledovný formát:
 
 ```json
 {
-  "_id":"67d06e7c7385d91b4265b5d8",
+  "_id": {
+    "$oid": "67f2d68d63ee393b26b18b59"
+  },
+  "username": "backoffice",
+  "password": "$2b$12$fDEu1Ru66tLWAVidMN.b0.929BlfnyqdGuhWMyzfOAf/ATYOyLoY6"
+}
+```
+
+Dokumenty v kolekcii `orders` majú nasledovný formát:
+
+```json
+{
+  "_id": {
+    "$oid": "67d06e7c7385d91b4265b5d8"
+  },
   "tableNumber":5,
   "orderItems":[
     {

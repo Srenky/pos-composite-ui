@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Typography, Container, Grid } from "@mui/material";
 import CreatedOrderCard from "../components/OrderCardKitchen";
-// import mqtt, { MqttClient } from "mqtt";
+import mqtt, { MqttClient } from "mqtt";
 
 interface OrderItem {
   id: number;
@@ -32,41 +32,41 @@ const options = {
 
 const KitchenPage: React.FC = () => {
   const [orders, setOrders] = useState<KitchenOrder[]>([]);
-  // const [client, setClient] = useState<MqttClient | null>(null);
+  const [client, setClient] = useState<MqttClient | null>(null);
 
-  // useEffect(() => {
-  //   const client = mqtt.connect(
-  //     "wss://ee3fe3db.ala.eu-central-1.emqxsl.com:8084/mqtt",
-  //     options,
-  //   );
-  //   setClient(client);
+  useEffect(() => {
+    const client = mqtt.connect(
+      "wss://ee3fe3db.ala.eu-central-1.emqxsl.com:8084/mqtt",
+      options,
+    );
+    setClient(client);
 
-  //   return () => {
-  //     client.end();
-  //   };
-  // }, []);
+    return () => {
+      client.end();
+    };
+  }, []);
 
-  // useEffect(() => {
-  //   if (client) {
-  //     client.on("connect", () => {
-  //       client.subscribe("order/new");
-  //     });
+  useEffect(() => {
+    if (client) {
+      client.on("connect", () => {
+        client.subscribe("order/new");
+      });
 
-  //     client.on("message", (topic, message) => {
-  //       if (topic === "order/new") {
-  //         const newOrder = JSON.parse(message.toString());
-  //         setOrders((prevOrders) => [...prevOrders, newOrder]);
-  //       }
-  //     });
-  //   }
-  // }, [client]);
+      client.on("message", (topic, message) => {
+        if (topic === "order/new") {
+          const newOrder = JSON.parse(message.toString());
+          setOrders((prevOrders) => [...prevOrders, newOrder]);
+        }
+      });
+    }
+  }, [client]);
 
   const handleOrderDone = (index: number) => {
     const updatedOrders = [...orders];
     updatedOrders[index].done = true;
     setOrders(updatedOrders);
 
-    // client?.publish("order/ready", `${updatedOrders[index].tableNumber}`);
+    client?.publish("order/ready", `${updatedOrders[index].tableNumber}`);
   };
 
   return (
@@ -76,7 +76,7 @@ const KitchenPage: React.FC = () => {
         sx={{
           marginBottom: 2,
           fontSize: {
-            xs: "1.25rem", // Adjust font size for mobile
+            xs: "1.25rem",
             sm: "1.5rem",
           },
         }}
@@ -84,7 +84,6 @@ const KitchenPage: React.FC = () => {
         Kitchen Orders
       </Typography>
 
-      {/* Display a message if there are no orders */}
       {orders.filter((order) => !order.done).length === 0 && (
         <Typography variant="body1">No orders right now</Typography>
       )}
@@ -93,14 +92,7 @@ const KitchenPage: React.FC = () => {
         {orders.map(
           (order, index) =>
             !order.done && (
-              <Grid
-                item
-                xs={12} // Full-width on extra-small screens
-                sm={6} // Two columns on small screens
-                md={4} // Three columns on medium screens
-                lg={3} // Four columns on large screens
-                key={index}
-              >
+              <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                 <CreatedOrderCard
                   tableNumber={order.tableNumber}
                   orderItems={order.orderItems}

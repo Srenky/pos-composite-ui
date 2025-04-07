@@ -76,7 +76,7 @@ const App: React.FC = () => {
         sx={{
           marginBottom: 2,
           fontSize: {
-            xs: "1.25rem", // Adjust font size for mobile
+            xs: "1.25rem",
             sm: "1.5rem",
           },
         }}
@@ -93,14 +93,7 @@ const App: React.FC = () => {
         {orders.map(
           (order: KitchenOrder, index: number) =>
             !order.done && (
-              <Grid
-                item
-                xs={12}
-                sm={6}
-                md={4}
-                lg={3}
-                key={index}
-              >
+              <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                 <CreatedOrderCard
                   tableNumber={order.tableNumber}
                   orderItems={order.orderItems}
