@@ -10,6 +10,8 @@
 
 V devtools otvorte sekciu `Network` a v nej sledujte časy ako dlho trvalo prehliadaču načítanie jednotlivých assetov (JS, CSS). V dolnej časti možno pozorovať celkový čas trvania načítania aplikácie `Load`.
 
+Okrem toho je možné využiť komponent `Profiler`, ktorý poskytuje React a pomocou neho merať rôzne vlastnosti aplikácie. Príklad ako ho možno použiť si môžete pozrieť buď [v kóde](https://github.com/Srenky/pos-composite-ui/blob/main/apps/monolith-app/src/App.tsx) alebo na https://react.dev/reference/react/Profiler
+
 ![Meranie render](images/devtools-loadtime.png)
 
 ## Meranie latencie - MQTT
@@ -24,7 +26,17 @@ Pomocou MQTTX sa pripojte na MQTT brokera a môžete simulovať posielanie sprá
 
 ## Meranie latencie - REST
 
-Primárne aplikácie komunikujú iba skrz MQTT, v prípade aplikácie `Kitchen display` sme ale pre tento experiment pripravili [túto čast kódu](https://github.com/Srenky/pos-composite-ui/blob/main/apps/kitchen-app/src/App.tsx#L44), ktorú treba odkomentovať, aby aplikácia periodicky volala backend.
+Pre meranie latencie je možné použiť pomocné výpisy do konzole pomocou `console.time a console.timeEnd` pred a po zavolaní na REST endpoint. Nižšie je ukážka ako je môžné tieto výpisy využiť.
+
+```javascript
+const fetchOrders = async () => {
+  console.time("fetchOrders");
+  const response = await fetch("https://rest-api-url/orders");
+  const data = await response.json();
+  console.timeEnd("fetchOrders");
+  // Do something with the data ...
+};
+```
 
 Pre zjednodušenie testovania sme pripravili aj [skript](https://github.com/Srenky/pos-composite-ui/blob/main/apps/rest/script.sh), ktorý v periodických intervaloch (1 až 5 sekúnd) vygeneruje náhodnú objednávku a túto objednávku pošle na backend.
 
