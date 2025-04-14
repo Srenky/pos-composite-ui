@@ -35,14 +35,23 @@ const App: React.FC = () => {
   const [client, setClient] = useState<MqttClient | null>(null);
 
   useEffect(() => {
-    const client = mqtt.connect(
-      "wss://ee3fe3db.ala.eu-central-1.emqxsl.com:8084/mqtt",
-      options,
-    );
+    const client = mqtt.connect(process.env.MQTT_BROKER_URL!, options);
     setClient(client);
+
+    // Uncomment this if you want to test REST vs MQTT
+    const fetchOrders = async () => {
+      console.time("fetchOrders");
+      const response = await fetch(process.env.REST_API_URL!);
+      const data = await response.json();
+      // setTableOrders(data);
+      console.timeEnd("fetchOrders");
+    };
+
+    const interval = setInterval(fetchOrders, 1000);
 
     return () => {
       client.end();
+      clearInterval(interval);
     };
   }, []);
 
@@ -52,10 +61,10 @@ const App: React.FC = () => {
         client.subscribe("order/new");
       });
 
-      client.on("message", (topic: string, message: any) => {
+      client.on("message", (topic, message) => {
         if (topic === "order/new") {
           const newOrder = JSON.parse(message.toString());
-          setOrders((prevOrders: KitchenOrder[]) => [...prevOrders, newOrder]);
+          setOrders((prevOrders) => [...prevOrders, newOrder]);
         }
       });
     }
@@ -84,14 +93,13 @@ const App: React.FC = () => {
         Kitchen Orders
       </Typography>
 
-      {/* Display a message if there are no orders */}
-      {orders.filter((order: KitchenOrder) => !order.done).length === 0 && (
+      {orders.filter((order) => !order.done).length === 0 && (
         <Typography variant="body1">No orders right now</Typography>
       )}
 
       <Grid container spacing={2}>
         {orders.map(
-          (order: KitchenOrder, index: number) =>
+          (order, index) =>
             !order.done && (
               <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                 <CreatedOrderCard

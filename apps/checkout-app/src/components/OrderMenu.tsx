@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import { Add, Remove } from '@mui/icons-material';
 
+// Define types for menu items and orders
 interface MenuItem {
   id: number;
   name: string;
@@ -27,6 +28,7 @@ export interface OrderItem {
   price: number;
 }
 
+// Props for OrderDialog component
 interface OrderDialogProps {
   menuItems: MenuItem[];
   open: boolean;

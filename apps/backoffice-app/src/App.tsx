@@ -43,23 +43,27 @@ const App: React.FC = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [analytics, setAnalytics] = useState({
-    totalEarnings: 500,
-    orderCount: 100,
+    totalEarnings: 0,
+    totalOrders: 0,
   });
 
   useEffect(() => {
     const fetchMenuItems = async () => {
-      const response = await fetch("https://dpne9iqs25.execute-api.eu-north-1.amazonaws.com/menu");
+      const response = await fetch(process.env.REST_API_URL!);
       const data = await response.json();
       setMenuItems(data);
     };
 
-    fetchMenuItems();
+    const fetchAnalytics = async () => {
+      const response = await fetch(process.env.REST_API_URL!);
+      const data = await response.json();
+      setAnalytics(data);
+    };
 
-    const client = mqtt.connect(
-      "wss://ee3fe3db.ala.eu-central-1.emqxsl.com:8084/mqtt",
-      options,
-    );
+    fetchMenuItems();
+    fetchAnalytics();
+
+    const client = mqtt.connect(process.env.MQTT_BROKER_URL!, options);
     setClient(client);
 
     return () => {
@@ -69,9 +73,9 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (client) {
-      client.on("connect", () => { });
+      client.on("connect", () => {});
 
-      client.on("message", (topic, message) => { });
+      client.on("message", (topic, message) => {});
     }
   }, [client]);
 
@@ -122,6 +126,7 @@ const App: React.FC = () => {
 
   return (
     <Container maxWidth="lg" sx={{ padding: 2 }}>
+      {/* Analytics Section */}
       <Paper sx={{ padding: 3, marginBottom: 3 }}>
         <Typography variant="h5" sx={{ marginBottom: 2 }}>
           Analytics
@@ -130,10 +135,11 @@ const App: React.FC = () => {
           Total Earnings: ${analytics.totalEarnings}
         </Typography>
         <Typography variant="h6">
-          Total Orders: {analytics.orderCount}
+          Total Orders: {analytics.totalOrders}
         </Typography>
       </Paper>
 
+      {/* Menu Items Section */}
       <Typography variant="h5" sx={{ marginBottom: 2 }}>
         Menu Items
       </Typography>
@@ -181,6 +187,7 @@ const App: React.FC = () => {
         </Button>
       </Box>
 
+      {/* Dialog for Add/Edit Menu Item */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>
           {selectedItem ? "Edit Menu Item" : "Add New Menu Item"}
@@ -229,6 +236,7 @@ const App: React.FC = () => {
         </DialogActions>
       </Dialog>
 
+      {/* Snackbar for notifications */}
       <Snackbar
         open={openSnackbar}
         autoHideDuration={3000}

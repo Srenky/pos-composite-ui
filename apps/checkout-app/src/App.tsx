@@ -47,18 +47,20 @@ const App: React.FC = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
+  // const [messageFromMAUI, setMessageFromMAUI] = useState<string>(
+  //   'Waiting for message from MAUI...',
+  // );
+
   const handleMessageFromMAUI = (event: MessageEvent) => {
     if (JSON.stringify(event.data).includes('fromMaui')) {
-      const parts = event.data.split(':'); // message format: "fromMaui:PaymentStatus"
-      setSnackbarMessage(parts[1]);
+      // const parts = event.data.split(':'); // message format: "fromMaui:PaymentStatus"
+      // setMessageFromMAUI(parts[1]);
     }
   };
 
   useEffect(() => {
     const fetchMenuItems = async () => {
-      const response = await fetch(
-        'https://dpne9iqs25.execute-api.eu-north-1.amazonaws.com/menu',
-      );
+      const response = await fetch(process.env.REST_API_URL!);
       const data = await response.json();
       setMenuItems(data);
     };
@@ -67,10 +69,7 @@ const App: React.FC = () => {
 
     window.addEventListener('message', handleMessageFromMAUI);
 
-    const client = mqtt.connect(
-      'wss://ee3fe3db.ala.eu-central-1.emqxsl.com:8084/mqtt',
-      options,
-    );
+    const client = mqtt.connect(process.env.MQTT_BROKER_URL!, options);
     setClient(client);
 
     return () => {
@@ -88,7 +87,7 @@ const App: React.FC = () => {
         client.subscribe('menu/remove');
       });
 
-      client.on('message', (topic: string, message: any) => {
+      client.on('message', (topic, message) => {
         switch (topic) {
           case 'order/ready': {
             const tableNumber = message.toString();
@@ -99,25 +98,31 @@ const App: React.FC = () => {
 
           case 'menu/new': {
             const newMenuItem = JSON.parse(message.toString());
-            setMenuItems((prev: MenuItem[]) => [...prev, newMenuItem]);
+            setMenuItems((prev) => [...prev, newMenuItem]);
             break;
           }
 
           case 'menu/updated': {
             const updatedMenuItem = JSON.parse(message.toString());
-            const updatedMenuItems = menuItems.map((item: MenuItem) =>
-              item.id === updatedMenuItem.id ? updatedMenuItem : item,
-            );
-            setMenuItems(updatedMenuItems);
+            setMenuItems((prev) => {
+              const index = prev.findIndex(
+                (item) => item.id === updatedMenuItem.id,
+              );
+              if (index !== -1) {
+                const updatedItems = [...prev];
+                updatedItems[index] = updatedMenuItem;
+                return updatedItems;
+              }
+              return prev;
+            });
             break;
           }
 
           case 'menu/remove': {
             const removedMenuItemId = parseInt(message.toString(), 10);
-            const updatedMenuItems = menuItems.filter(
-              (item: MenuItem) => item.id !== removedMenuItemId,
+            setMenuItems((prev) =>
+              prev.filter((item) => item.id !== removedMenuItemId),
             );
-            setMenuItems(updatedMenuItems);
             break;
           }
         }
@@ -141,7 +146,22 @@ const App: React.FC = () => {
       done: false,
     };
 
-    setTableOrders((prev: TableOrder[]) => [...prev, newTableOrder]);
+    setTableOrders((prev) => [...prev, newTableOrder]);
+
+    //print time of publish
+    // const startTime = Date.now();
+    // console.log(new Date().toISOString());
+    client?.publish(
+      'order/new',
+      JSON.stringify(newTableOrder),
+      { qos: 2 },
+      (err) => {
+        if (!err) {
+          // const latency = Date.now() - startTime;
+          // console.log(`Latency for QoS 2: ${latency} ms`);
+        }
+      },
+    );
   };
 
   return (
@@ -157,7 +177,7 @@ const App: React.FC = () => {
           marginRight: 'auto',
           marginBottom: 2,
           fontSize: {
-            xs: '0.875rem',
+            xs: '0.875rem', // Small font on mobile
             sm: '1rem',
           },
         }}
@@ -175,7 +195,7 @@ const App: React.FC = () => {
         sx={{
           marginBottom: 2,
           fontSize: {
-            xs: '1.25rem',
+            xs: '1.25rem', // Adjust font size for mobile
             sm: '1.5rem',
           },
         }}
@@ -201,7 +221,7 @@ const App: React.FC = () => {
             sx={{
               textAlign: 'center',
               fontSize: {
-                xs: '0.875rem',
+                xs: '0.875rem', // Small font on mobile
                 sm: '1rem',
               },
             }}
@@ -211,6 +231,7 @@ const App: React.FC = () => {
         )}
       </Box>
 
+      {/* Snackbar for notifications */}
       <Snackbar
         open={openSnackbar}
         autoHideDuration={3000}

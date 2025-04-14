@@ -1,6 +1,6 @@
 import { MongoClient } from "mongodb";
 
-const connectionString = "mongodb+srv://STRING_TO_YOUR_DB.mongodb.net/";
+const connectionString = process.env.MONGODB_URL;
 const client = new MongoClient(connectionString);
 let conn;
 
@@ -10,6 +10,6 @@ try {
   console.error(e);
 }
 
-let db = conn.db("DB_NAME");
+let db = conn.db("pos");
 
 export default db;
